@@ -1,0 +1,105 @@
+package com.sitemap.weifang.adapter;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.http.HttpImageUtil;
+
+import java.util.List;
+
+/**
+ * @desc 新名片 适配器
+ * Created by chenmeng on 2016/12/14.
+ */
+public class NewCardListAdapter extends BaseAdapter {
+    private Context mContext;
+    private List<String> mList;
+    private Holder holder;
+
+    private OnNewCardAddCallBack callBack;
+
+    public interface OnNewCardAddCallBack{
+        void onIgnore(int pos);
+        void onAdd(int pos);
+        void onEntry(int pos);
+    }
+
+    public NewCardListAdapter(Context context,List<String> list,OnNewCardAddCallBack callBack){
+        this.mContext = context;
+        this.mList = list;
+        this.callBack = callBack;
+    }
+
+    @Override
+    public int getCount() {
+        return mList.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return mList.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null){
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.new_card_list_view_item,null);
+            holder = new Holder();
+            holder.img = (ImageView) convertView.findViewById(R.id.img);
+            holder.name = (TextView) convertView.findViewById(R.id.name);
+            holder.tel = (TextView) convertView.findViewById(R.id.tel);
+            holder.ignore = (TextView) convertView.findViewById(R.id.ignore);
+            holder.add = (TextView) convertView.findViewById(R.id.add);
+            holder.entry = (RelativeLayout) convertView.findViewById(R.id.entry);
+            convertView.setTag(holder);
+        }else{
+            holder = (Holder) convertView.getTag();
+        }
+        HttpImageUtil.loadRoundImage(holder.img,mList.get(position));
+        final int pos = position;
+        holder.ignore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (callBack!=null){
+                    callBack.onIgnore(pos);
+                }
+            }
+        });
+        holder.add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (callBack!=null){
+                    callBack.onAdd(pos);
+                }
+            }
+        });
+        holder.entry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (callBack!=null){
+                    callBack.onEntry(pos);
+                }
+            }
+        });
+
+        return convertView;
+    }
+
+    private class Holder{
+        ImageView img;
+        TextView name,tel,ignore,add;
+        RelativeLayout entry;//进入
+    }
+}

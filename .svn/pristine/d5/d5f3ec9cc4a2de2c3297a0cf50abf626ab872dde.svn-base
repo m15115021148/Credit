@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/layout"
+    android:orientation="vertical"
+    tools:context="com.sitemap.weifang.activity.CreditReportActivity">
+
+    <include
+        layout="@layout/include_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                style="@style/CreditReportLayoutStyle"
+                android:layout_marginTop="@dimen/_10px_in720p">
+
+                <TextView
+                    android:id="@+id/credit_name"
+                    style="@style/CreditReportTextStyle"
+                    android:text="@string/credit_report_name" />
+
+                <EditText
+                    android:id="@+id/credit_report_name"
+                    style="@style/CreditReportEditStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/CreditReportLayoutStyle">
+
+                <TextView
+                    android:id="@+id/credit_code"
+                    style="@style/CreditReportTextStyle"
+                    android:text="@string/credit_report_code" />
+
+                <EditText
+                    android:id="@+id/credit_report_code"
+                    style="@style/CreditReportEditStyle"
+                    android:digits="0123456789xX" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/CreditReportLayoutStyle">
+
+                <TextView
+                    android:id="@+id/credit_tel"
+                    style="@style/CreditReportTextStyle"
+                    android:text="@string/credit_report_tel" />
+
+                <EditText
+                    android:id="@+id/credit_report_tel"
+                    style="@style/CreditReportEditStyle"
+                    android:inputType="phone" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/CreditReportLayoutStyle">
+
+                <TextView
+                    android:id="@+id/credit_email"
+                    style="@style/CreditReportTextStyle"
+                    android:text="@string/credit_report_email" />
+
+                <EditText
+                    android:id="@+id/credit_report_email"
+                    style="@style/CreditReportEditStyle"
+                    android:inputType="textEmailAddress" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/CreditReportLayoutStyle">
+
+                <TextView
+                    android:id="@+id/credit_project"
+                    style="@style/CreditReportTextStyle"
+                    android:text="@string/credit_report_project" />
+
+                <EditText
+                    android:id="@+id/credit_report_project"
+                    style="@style/CreditReportEditStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/_20px_in720p">
+
+                <TextView
+                    android:id="@+id/credit_result"
+                    style="@style/CreditReportTextStyle"
+                    android:text="@string/credit_report_result" />
+
+                <EditText
+                    android:id="@+id/credit_report_result"
+                    style="@style/CreditReportEditStyle"
+                    android:layout_height="@dimen/_250px_in720p"
+                    android:background="@drawable/credit_report_edit_bg"
+                    android:gravity="top"
+                    android:inputType="textMultiLine"
+                    android:lines="10"
+                    android:maxLines="10" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/CreditReportLayoutStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/credit__affix"
+                    style="@style/CreditReportTextStyle"
+                    android:text="@string/credit_report_affix" />
+
+                <com.sitemap.weifang.view.MyGridView
+                    android:id="@+id/credit_affix_gridView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:numColumns="5">
+
+                </com.sitemap.weifang.view.MyGridView>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/credit_submit"
+                android:gravity="center"
+                android:background="@drawable/creidt_submit_bg"
+                android:padding="@dimen/_10px_in720p"
+                android:textSize="@dimen/_35px_in720p"
+                android:textColor="@color/white"
+                android:text="提交"
+                android:layout_marginTop="@dimen/_20px_in720p"
+                android:layout_margin="@dimen/_40px_in720p"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

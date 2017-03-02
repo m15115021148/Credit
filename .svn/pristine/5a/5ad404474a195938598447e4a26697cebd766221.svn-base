@@ -1,0 +1,133 @@
+package com.sitemap.weifang.activity;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSONObject;
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.adapter.CreditRecordAdapter;
+import com.sitemap.weifang.application.MyApplication;
+import com.sitemap.weifang.config.RequestCode;
+import com.sitemap.weifang.config.WebUrlConfig;
+import com.sitemap.weifang.http.HttpUtil;
+import com.sitemap.weifang.model.CreditRecordModel;
+import com.sitemap.weifang.util.ToastUtil;
+import com.sitemap.weifang.view.MyProgressDialog;
+
+import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.ViewInject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 获取我的信用记录
+ */
+@ContentView(R.layout.activity_news_list)
+public class CreditRecordActivity extends BaseActivity implements View.OnClickListener{
+    private CreditRecordActivity mContext;//本类
+    @ViewInject(R.id.back)
+    private LinearLayout mBack;//返回上一层
+    @ViewInject(R.id.title)
+    private TextView mTitle;//标题
+    @ViewInject(R.id.news_list)
+    private ListView news_list;//信用承诺列表
+    private CreditRecordAdapter adapter;//适配器
+    private MyProgressDialog progressDialog;//进度条
+    private HttpUtil http;//网络请求
+    private List<CreditRecordModel> mList;//数据
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        init();
+    }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();// 关闭进度条
+            }
+            switch (msg.what){
+                case HttpUtil.SUCCESS:
+                    //获取我的信用记录
+                    if (msg.arg1 == RequestCode.GETRECORDS){
+                        CreditRecordModel model = JSONObject.parseObject(msg.obj.toString(), CreditRecordModel.class);
+                        if (model.getResult().equals("1")){
+                            mList = new ArrayList<>();
+                            mList.clear();
+                            mList.add(model);
+                            initListViewData(mList);
+                        }else{
+                            MyApplication.setEmptyShowText(mContext,news_list,model.getErrorMsg());
+                        }
+
+                    }
+                    break;
+                case HttpUtil.EMPTY:
+                    if (msg.arg1 == RequestCode.GETRECORDS){
+                        MyApplication.setEmptyShowText(mContext,news_list,"暂无记录");
+                    }
+                    break;
+                case HttpUtil.FAILURE:
+                    ToastUtil.showBottomShort(mContext, RequestCode.ERRORINFO);
+                    break;
+                case HttpUtil.LOADING:
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 获取我的信用记录
+     */
+    private void getRecord(String userID){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            http.sendGet(RequestCode.GETRECORDS, WebUrlConfig.getRecords(userID));
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void init(){
+        mContext = this;
+        mBack.setOnClickListener(this);
+        mTitle.setText("信用记录");
+        if (http == null){
+            http = new HttpUtil(handler);
+        }
+        getRecord(MyApplication.loginModel.getUserID());
+    }
+
+    /**
+     * 初始化listview数据
+     */
+    private void initListViewData(List<CreditRecordModel> list) {
+        adapter=new CreditRecordAdapter(mContext,list);
+        news_list.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == mBack){
+            mContext.finish();
+        }
+    }
+}

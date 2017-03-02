@@ -1,0 +1,290 @@
+package com.sitemap.weifang.activity;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSONObject;
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.adapter.NamesCardListAdapter;
+import com.sitemap.weifang.application.MyApplication;
+import com.sitemap.weifang.config.RequestCode;
+import com.sitemap.weifang.config.WebUrlConfig;
+import com.sitemap.weifang.http.HttpUtil;
+import com.sitemap.weifang.model.CardCaseModel;
+import com.sitemap.weifang.model.ResultModel;
+import com.sitemap.weifang.util.DialogUtil;
+import com.sitemap.weifang.util.ToastUtil;
+import com.sitemap.weifang.view.MyProgressDialog;
+
+import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.ViewInject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+/**
+ * 名片夹页面
+ * Created by chenmeng on 2016/12/13.
+ */
+@ContentView(R.layout.activity_names_card)
+public class NamesCardActivity extends BaseActivity implements View.OnClickListener {
+    private NamesCardActivity mContext;//本类
+    @ViewInject(R.id.back)
+    private LinearLayout mBack;//返回上一层
+    @ViewInject(R.id.title)
+    private TextView mTitle;//标题
+    @ViewInject(R.id.card_listView)
+    private ListView mLv;//listView
+    private NamesCardListAdapter adapter;//适配器
+    @ViewInject(R.id.card_search)
+    private LinearLayout mSearchClick;//点击事件
+    @ViewInject(R.id.card_search_txt)
+    private EditText mSearch;//输入的et
+    private List<CardCaseModel> mList;//数据
+    private List<CardCaseModel> mCurrList = new ArrayList<>();//数据
+    private MyProgressDialog progressDialog;//进度条
+    private HttpUtil http;//网络请求
+    @ViewInject(R.id.card_check)
+    private View mLayout;//搜索布局
+    private View dialogView;//弹出框
+    private int currPos = 0;//当前的选中位置
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = this;
+        initData();
+    }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();// 关闭进度条
+            }
+            switch (msg.what){
+                case HttpUtil.SUCCESS:
+                    //获取我的名片夹
+                    if (msg.arg1 == RequestCode.GETCARDCASE){
+                        mLayout.setVisibility(View.VISIBLE);
+                        mList = new ArrayList<>();
+                        mList.clear();
+                        mList = JSONObject.parseArray(msg.obj.toString(), CardCaseModel.class);
+                        mLayout.setVisibility(View.VISIBLE);
+                        initListViewData(mList);
+                    }
+                    //删除
+                    if (msg.arg1 == RequestCode.DELETECARD){
+                        ResultModel model = JSONObject.parseObject(msg.obj.toString(), ResultModel.class);
+                        if (model.getResult().equals("1")){
+                            mList.remove(currPos);
+                            adapter.notifyDataSetChanged();
+                            ToastUtil.showBottomShort(mContext,"删除成功");
+                        }else{
+                            ToastUtil.showBottomShort(mContext,model.getErrorMsg());
+                        }
+                    }
+                    break;
+                case HttpUtil.EMPTY:
+                    //获取我的名片夹
+                    if (msg.arg1 == RequestCode.GETCARDCASE){
+                        MyApplication.setEmptyShowText(mContext,mLv,"暂无好友");
+                        mLayout.setVisibility(View.GONE);
+                    }
+                    break;
+                case HttpUtil.FAILURE:
+                    ToastUtil.showBottomShort(mContext, RequestCode.ERRORINFO);
+                    break;
+                case HttpUtil.LOADING:
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 获取我的名片夹
+     * @param userID
+     */
+    private void getNamesCard(String userID){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            http.sendGet(RequestCode.GETCARDCASE,WebUrlConfig.getCardCase(userID));
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 获取我的名片夹
+     * @param userID
+     */
+    private void getDeleteCard(String userID,String cardID){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            http.sendGet(RequestCode.DELETECARD,WebUrlConfig.getDeleteCard(userID,cardID));
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void initData() {
+        mBack.setOnClickListener(this);
+        mSearchClick.setOnClickListener(this);
+        mTitle.setText("名片夹");
+        checkNames();
+        if (http == null){
+            http = new HttpUtil(handler);
+        }
+        getNamesCard(MyApplication.loginModel.getUserID());
+//        initListViewData();
+
+    }
+
+    /**
+     * 初始化listview数据
+     */
+    private void initListViewData(final List<CardCaseModel> list) {
+//        //头部
+//        View headView = getLayoutInflater().inflate(R.layout.search_layout, null);
+//        mSearchClick = (LinearLayout) headView.findViewById(R.id.card_search);
+//        mSearchClick.setOnClickListener(this);
+//        mSearch = (EditText) headView.findViewById(R.id.card_search_txt);
+//        mLv.addHeaderView(headView);
+        if (list.size()>0){
+            adapter = new NamesCardListAdapter(mContext, list);
+            mLv.setAdapter(adapter);
+            mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(mContext,CreditCardActivity.class);
+                    intent.putExtra("isShow",1);//没有显示添加按钮
+                    if (MyApplication.loginType==1){
+                        intent.putExtra("personID",list.get(position).getUserID());
+                    }else{
+                        intent.putExtra("companyID",list.get(position).getUserID());
+                    }
+                    startActivity(intent);
+                }
+            });
+            mLv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    dialogView = DialogUtil.customPromptDialog(mContext, "确定", "取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            currPos = position;
+                            getDeleteCard(MyApplication.loginModel.getUserID(),list.get(position).getCardID());
+                        }
+                    }, null);
+                    TextView txt = (TextView) dialogView.findViewById(R.id.dialog_tv_txt);
+                    txt.setText("确定要删除吗？");
+                    return true;
+                }
+            });
+        }else{
+            MyApplication.setEmptyShowText(mContext,mLv,"暂无好友信息");
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == mBack) {
+            finish();
+        }
+        if (v == mSearchClick) {
+            mSearch.setVisibility(View.VISIBLE);
+            mSearchClick.setVisibility(View.GONE);
+            mSearch.requestFocus();
+            opeKey();
+        }
+    }
+
+    /**
+     * 打开键盘
+     */
+    private void opeKey() {
+        //延时打开软键盘 保证数据加载完毕
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {
+                InputMethodManager inputManager =
+                        (InputMethodManager) mSearch.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.showSoftInput(mSearch, 0);
+            }
+        }, 998);
+    }
+
+    /**
+     * 查询内容
+     */
+    private void checkNames() {
+        // edittext 点击事件
+        mSearch.addTextChangedListener(new TextWatcher() {
+            int len = 0;//记录字符串被删除字符之前，字符串的长度
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (mSearch.length() == 0) {
+
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                len = s.length();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    mCurrList.clear();
+                    for (CardCaseModel model:mList){
+                        if (model.getXm().contains(mSearch.getText().toString().trim())){
+                            mCurrList.add(model);
+                        }
+                    }
+                    if (mCurrList.size()>0){
+                        initListViewData(mCurrList);
+                    }else{
+                        mCurrList.clear();
+                        CardCaseModel model = new CardCaseModel();
+                        mCurrList.add(model);
+                        initListViewData(mCurrList);
+                    }
+                }else{
+                    if (mList.size()>0)
+                        initListViewData(mList);
+                }
+            }
+        });
+    }
+}

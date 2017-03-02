@@ -1,0 +1,215 @@
+package com.sitemap.weifang.config;
+
+/**
+ * @author chenhao
+ * @ClassName: WebUrlConfig.java
+ * @Description: 网络url（接口）配置文件
+ * @Date 2015-11-14
+ */
+
+public class WebUrlConfig {
+    private static final String HOST_NAME = WebHostConfig.getHostName();
+    private static final String LOGIN = HOST_NAME + "dbAction_login.do";//登录
+
+    private static final String REGISTER_FIRST = HOST_NAME + "dbAction_register_first.do";//注册一
+    private static final String REGISTER_SECOND = HOST_NAME + "dbAction_register_second.do";//注册2
+    private static final String GET_CARD_CASE = HOST_NAME + "dbAction_getCardcase.do?";//获取我的名片夹
+    private static final String GET_RECORDS = HOST_NAME + "dbAction_getRecords.do?";//获取我的信用记录
+    private static final String GET_PERSON = HOST_NAME + "dbAction_getPerson.do?";//获取某个自然人的信用名片
+    private static final String GET_COMPANY = HOST_NAME + "dbAction_getCompany.do?";//获取某个法人的信用名片
+    private static final String QUERY_PERSON = HOST_NAME + "dbAction_queryPerson.do?";//查询自然人的信用名片
+    private static final String QUERY_COMPANY = HOST_NAME + "dbAction_queryCompany.do?";//查询法人的信用名片
+    private static final String ADD_CARD = HOST_NAME + "dbAction_addCard.do?";//申请添加信用名片
+    private static final String DEAL_ADD_CARD = HOST_NAME + "dbAction_dealAddCard.do?";//处理“申请添加信用名片”请求
+    private static final String CREDIT_SERVICE = HOST_NAME + "dbAction_creditService.do?";//信用服务
+    private static final String GET_NEWS = HOST_NAME + "dbAction_getNews.do?";//获取新闻
+    private static final String GET_MY_MSG = HOST_NAME + "dbAction_getMyMsg.do?";//获取我的消息
+    private static final String GET_MY_NEWS = HOST_NAME + "dbAction_getMyNews.do?";//获取推送过的新闻
+    private static final String GET_MY_SERVICE = HOST_NAME + "dbAction_getMyService.do?";//获取我的信用服务
+    private static final String GET_MY_NEW_CARD = HOST_NAME + "dbAction_getMyNewCard.do?";//获取我的名片被添加申请
+    private static final String DELETE_CARD = HOST_NAME + "dbAction_deleteCard.do?";// 删除信用名片
+
+    /**
+     * 注册一
+     *
+     * @return
+     */
+    public static String getRegisterFirst() {
+        return REGISTER_FIRST;
+    }
+
+    /**
+     * 注册2
+     *
+     * @return
+     */
+    public static String getRegisterSecond() {
+        return REGISTER_SECOND;
+    }
+
+    /**
+     * 登录
+     *
+     * @return
+     */
+    public static String getLogin() {
+        return LOGIN;
+    }
+
+    /**
+     * 获取我的名片夹
+     *
+     * @param userID
+     * @return
+     */
+    public static String getCardCase(String userID) {
+        return GET_CARD_CASE + "userID=" + userID;
+    }
+
+    /**
+     * 获取我的信用记录
+     *
+     * @param userID
+     * @return
+     */
+    public static String getRecords(String userID) {
+        return GET_RECORDS + "userID=" + userID;
+    }
+
+    /**
+     * 获取某个自然人的信用名片
+     *
+     * @param personID
+     * @return
+     */
+    public static String getPerson(String personID) {
+        return GET_PERSON + "personID=" + personID;
+    }
+
+    /**
+     * 获取某个法人的信用名片
+     *
+     * @param companyID
+     * @return
+     */
+    public static String getCompany(String companyID) {
+        return GET_COMPANY + "companyID=" + companyID;
+    }
+
+    /**
+     * 查询自然人的信用名片
+     *
+     * @param xm   名字
+     * @param code 用户身份证号码
+     * @return
+     */
+    public static String getQueryPerson(String xm, String code) {
+        return QUERY_PERSON + "xm=" + xm + "&code=" + code;
+    }
+
+    /**
+     * 查询法人的信用名片
+     *
+     * @param xm   名字
+     * @param code 组织机构代码
+     * @return
+     */
+    public static String getQueryCompany(String xm, String code) {
+        return QUERY_COMPANY + "xm=" + xm + "&code=" + code;
+    }
+
+    /**
+     * 申请添加信用名片
+     *
+     * @param userID 用户id
+     * @param cardID 名片id
+     * @return
+     */
+    public static String getAddCard(String userID, String cardID) {
+        return ADD_CARD + "userID=" + userID + "&cardID=" + cardID;
+    }
+
+    /**
+     * 处理“申请添加信用名片”请求
+     *
+     * @param addCardID 请求添加id
+     * @param opinion   处理结果（1：同意；2：忽略）
+     * @return
+     */
+    public static String getDealAddCard(String addCardID, String opinion) {
+        return DEAL_ADD_CARD + "addCardID=" + addCardID + "&opinion=" + opinion;
+    }
+
+    /**
+     * 信用服务
+     *
+     * @return
+     */
+    public static String getCreditService() {
+        return CREDIT_SERVICE;
+    }
+
+    /**
+     * 获取新闻
+     *
+     * @param newsType 新闻类型
+     * @param page     页码（默认为0）
+     * @return
+     */
+    public static String getNews(String newsType, String page) {
+        return GET_NEWS + "newsType=" + newsType + "&page=" + page;
+    }
+
+    /**
+     * 获取我的消息
+     *
+     * @param userID 用户id
+     * @return
+     */
+    public static String getMyMsg(String userID) {
+        return GET_MY_MSG + "userID=" + userID;
+    }
+
+    /**
+     * 获取推送过的新闻
+     *
+     * @param page 页码（默认为0）
+     * @return
+     */
+    public static String getMyNews(String page) {
+        return GET_MY_NEWS + "page=" + page;
+    }
+
+    /**
+     * 获取我的信用服务
+     *
+     * @param userID 用户id
+     * @return
+     */
+    public static String getMyService(String userID) {
+        return GET_MY_SERVICE + "userID=" + userID;
+    }
+
+    /**
+     * 获取我的名片被添加申请
+     *
+     * @param userID 用户id
+     * @return
+     */
+    public static String getMyNewCard(String userID) {
+        return GET_MY_NEW_CARD + "userID=" + userID;
+    }
+
+    /**
+     * 删除信用名片
+     * @param userID 用户id
+     * @param cardID 名片id
+     * @return
+     */
+    public static String getDeleteCard(String userID,String cardID){
+        return DELETE_CARD + "userID=" + userID + "&cardID="+cardID;
+    }
+
+}
+
+	

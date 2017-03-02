@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">潍坊信用</string>
+
+    <string name="register_name_digits">
+    ._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ
+    </string>
+
+    <string name="mian_title">信用潍坊</string>
+
+    <string name="main_news_title">新闻栏目</string>
+    <string name="main_credit_title">信用服务</string>
+
+    <string name="credit_report_name">申请人姓名</string>
+    <string name="credit_report_code"> 身份证号码</string>
+    <string name="credit_report_tel">联系电话</string>
+    <string name="credit_report_email">电子邮件</string>
+    <string name="credit_report_project">举报项目名称</string>
+    <string name="credit_report_result">举报原因</string>
+    <string name="credit_report_affix">上传附件(最多三张)</string>
+
+    <string name="scan_text">将二维码/条码放入框内, 即可自动扫描</string>
+</resources>

@@ -1,0 +1,222 @@
+package com.sitemap.weifang.activity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSONObject;
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.adapter.NewsListAdapter;
+import com.sitemap.weifang.application.MyApplication;
+import com.sitemap.weifang.config.RequestCode;
+import com.sitemap.weifang.config.WebUrlConfig;
+import com.sitemap.weifang.http.HttpUtil;
+import com.sitemap.weifang.model.NewsModel;
+import com.sitemap.weifang.util.ToastUtil;
+import com.sitemap.weifang.view.MyProgressDialog;
+
+import org.xutils.http.RequestParams;
+import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.ViewInject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 新闻列表
+ */
+@ContentView(R.layout.activity_news_list)
+public class NewsListActivity extends BaseActivity implements View.OnClickListener {
+    private NewsListActivity mContext;//本类
+    @ViewInject(R.id.back)
+    private LinearLayout mBack;//返回上一层
+    @ViewInject(R.id.title)
+    private TextView mTitle;//标题
+    @ViewInject(R.id.news_list)
+    private ListView news_list;//新闻列表
+    private NewsListAdapter adapter;//适配器
+    private int jumpType = 0;//类型
+    private MyProgressDialog progressDialog;//进度条
+    private HttpUtil http;//网络请求
+    private List<NewsModel> mNewsList = new ArrayList<>();//数据
+    private List<NewsModel> mCurrList = new ArrayList<>();//当前显示的数据
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        init();
+//        initListViewData();
+    }
+
+    private Handler handler = new Handler(){
+        /**
+         * @param msg
+         */
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();// 关闭进度条
+            }
+            switch (msg.what) {
+                case HttpUtil.SUCCESS:
+                    //获取新闻
+                    if (msg.arg1 == RequestCode.GETNEWS){
+                        mNewsList.clear();
+                        mCurrList.clear();
+                        mNewsList = JSONObject.parseArray(msg.obj.toString(), NewsModel.class);
+                        if (jumpType == 0) {//政策法规
+                            for (NewsModel model:mNewsList){
+                                if (model.getCkType().equals("10")||model.getCkType().equals("21")
+                                        ||model.getCkType().equals("22")||model.getCkType().equals("23")){
+                                    mCurrList.add(model);
+                                }
+                            }
+                        } else if (jumpType == 1) {//信用动态
+                            for (NewsModel model:mNewsList){
+                                if (model.getCkType().equals("7")||model.getCkType().equals("8")
+                                        ||model.getCkType().equals("9")||model.getCkType().equals("32")){
+                                    mCurrList.add(model);
+                                }
+                            }
+                        } else if (jumpType == 2) {//信用研究
+                            for (NewsModel model:mNewsList){
+                                if (model.getCkType().equals("11")||model.getCkType().equals("12")
+                                        ||model.getCkType().equals("13")){
+                                    mCurrList.add(model);
+                                }
+                            }
+                        } else if (jumpType == 3) {//曝光台
+                            for (NewsModel model:mNewsList){
+                                if (model.getCkType().equals("26")||model.getCkType().equals("27")
+                                        ||model.getCkType().equals("30")||model.getCkType().equals("31")){
+                                    mCurrList.add(model);
+                                }
+                            }
+                        } else {//推送的信息的消息
+                            for (NewsModel model:mNewsList){
+                                mCurrList.add(model);
+                            }
+                        }
+
+                        if (mCurrList.size()>0&&mCurrList!=null){
+                            initListViewData(mCurrList);
+                        }else {
+                            MyApplication.setEmptyShowText(mContext,news_list,"暂无数据");
+                        }
+                    }
+                    break;
+                case HttpUtil.EMPTY:
+                    //获取新闻
+                    if (msg.arg1 == RequestCode.GETNEWS){
+                        if (jumpType==4){
+                            MyApplication.setEmptyShowText(mContext,news_list,"暂无最新新闻");
+                        }else{
+                            MyApplication.setEmptyShowText(mContext,news_list,"暂无新闻");
+                        }
+                    }
+                    break;
+                case HttpUtil.FAILURE:
+                    ToastUtil.showBottomShort(mContext, RequestCode.ERRORINFO);
+                    break;
+                case HttpUtil.LOADING:
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 获取新闻
+     * @param newsType
+     * @param page
+     */
+    private void getNewsData(String newsType,String page){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            http.sendGet(RequestCode.GETNEWS, WebUrlConfig.getNews(newsType,page));
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 获取推送的消息 新闻
+     */
+    private void getMyNews(String page){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            http.sendGet(RequestCode.GETNEWS, WebUrlConfig.getMyNews(page));
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void init() {
+        mContext = this;
+        mBack.setOnClickListener(this);
+        if (http == null){
+            http = new HttpUtil(handler);
+        }
+        jumpType = getIntent().getIntExtra("jumpType", 0);
+        if (jumpType == 0) {//新闻
+            mTitle.setText("政策法规");
+            getNewsData(String.valueOf(1),String.valueOf(0));
+        } else if (jumpType == 1) {
+            mTitle.setText("信用动态");
+            getNewsData(String.valueOf(2),String.valueOf(0));
+        } else if (jumpType == 2) {
+            mTitle.setText("信用研究");
+            getNewsData(String.valueOf(3),String.valueOf(0));
+        } else if (jumpType == 3) {
+            mTitle.setText("曝光台");
+            getNewsData(String.valueOf(4),String.valueOf(0));
+        } else {//推送的消息 新闻
+            mTitle.setText("新闻");
+            getMyNews(String.valueOf(0));
+        }
+    }
+
+    /**
+     * 初始化listview
+     */
+    private void initListViewData(final List<NewsModel> list) {
+        adapter = new NewsListAdapter(mContext,list);
+        news_list.setAdapter(adapter);
+        news_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent();
+                intent.setClass(mContext, NewsActivity.class);
+                intent.putExtra("newsUrl",list.get(position).getHtml());
+                startActivity(intent);
+            }
+        });
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        if (v == mBack) {
+            mContext.finish();
+        }
+    }
+}

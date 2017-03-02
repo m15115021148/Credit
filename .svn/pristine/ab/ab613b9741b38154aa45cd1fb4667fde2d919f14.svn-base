@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.sitemap.weifang.activity.CreditCardActivity">
+
+    <include
+        android:id="@+id/card_title"
+        layout="@layout/include_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/credit_card_qr"
+        android:layout_width="@dimen/_320px_in720p"
+        android:layout_height="@dimen/_320px_in720p"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_80px_in720p"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200px_in720p"
+        android:layout_marginTop="@dimen/_40px_in720p"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="@dimen/_140px_in720p"
+            android:layout_height="@dimen/_140px_in720p"
+            android:src="@drawable/user_img" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_80px_in720p"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_80px_in720p"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_80px_in720p" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_80px_in720p"
+        android:gravity="center_horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <TextView
+                android:visibility="gone"
+                android:layout_width="@dimen/_14px_in720p"
+                android:layout_height="@dimen/_22px_in720p"
+                android:background="@drawable/user_phone"
+                />
+
+            <TextView
+                android:id="@+id/phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_15px_in720p"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

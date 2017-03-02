@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+    <TextView
+        android:layout_width="@dimen/_100px_in720p"
+        android:layout_height="@dimen/_100px_in720p"
+        android:layout_marginTop="@dimen/_20px_in720p"
+        android:layout_marginLeft="@dimen/_20px_in720p"
+        android:layout_marginBottom="@dimen/_20px_in720p"
+        android:background="@color/gray"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_140px_in720p"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_70px_in720p"
+            android:gravity="bottom"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:textSize="@dimen/_30px_in720p"
+            android:text="XX"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_56px_in720p"
+            android:gravity="top"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:layout_marginTop="@dimen/_10px_in720p"
+            android:textSize="@dimen/_24px_in720p"
+            android:text="XXXXXXXXX"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_2px_in720p"
+            android:background="@color/pop_txt_bg"/>
+    </LinearLayout>
+</LinearLayout>

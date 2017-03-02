@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--个人登录 显示的文字-->
+
+    <!--信用监督-->
+    <string name="credit_supervise_name">投诉人姓名</string>
+    <string name="credit_supervise_code">身份证号码</string>
+    <string name="credit_supervise_tel">联系人电话</string>
+    <string name="credit_supervise_email">联系邮件</string>
+    <string name="credit_supervise_project">投诉主题</string>
+    <string name="credit_supervise_result">投诉内容</string>
+
+    <!--信用咨询-->
+    <string name="credit_inquiry_name">姓名</string>
+    <string name="credit_inquiry_code">身份证号码</string>
+    <string name="credit_inquiry_tel">联系人电话</string>
+    <string name="credit_inquiry_email">电子邮件</string>
+    <string name="credit_inquiry_project">咨询主题</string>
+    <string name="credit_inquiry_result">咨询内容</string>
+
+    <!--信用异议-->
+    <string name="credit_dissent_name">投诉人姓名</string>
+    <string name="credit_dissent_code">身份证号码</string>
+    <string name="credit_dissent_tel">联系人电话</string>
+    <string name="credit_dissent_email">联系邮箱</string>
+    <string name="credit_dissent_project">信用记录编号</string>
+    <string name="credit_dissent_result">详细描述</string>
+
+    <!--信用申报-->
+    <string name="credit_declare_name">申报人姓名</string>
+    <string name="credit_declare_code">身份证号码</string>
+    <string name="credit_declare_tel">联系人电话</string>
+    <string name="credit_declare_email">电子邮件</string>
+    <string name="credit_declare_project">举报项目名称</string>
+    <string name="credit_declare_result">举报原因</string>
+
+    <!--查询-->
+    <string name="search_name">姓名</string>
+    <string name="search_code">身份证号码</string>
+
+    <!--个人中心-->
+    <string name="user_qr_code">我的二维码</string>
+    <string name="user_code">身份证号码</string>
+    <string name="user_credit_record">我的信用记录</string>
+</resources>

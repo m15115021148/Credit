@@ -1,0 +1,370 @@
+package com.sitemap.weifang.activity;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSONObject;
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.adapter.CreditGridViewAdapter;
+import com.sitemap.weifang.application.MyApplication;
+import com.sitemap.weifang.config.RequestCode;
+import com.sitemap.weifang.config.WebUrlConfig;
+import com.sitemap.weifang.http.HttpUtil;
+import com.sitemap.weifang.model.ResultModel;
+import com.sitemap.weifang.util.DialogUtil;
+import com.sitemap.weifang.util.RegularUtil;
+import com.sitemap.weifang.util.SystemFunUtil;
+import com.sitemap.weifang.util.ToastUtil;
+import com.sitemap.weifang.view.MyProgressDialog;
+
+import org.xutils.http.RequestParams;
+import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.ViewInject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * 信用申报
+ *
+ * @author chenmeng created by 2016/11/17
+ */
+@ContentView(R.layout.activity_credit_report)
+public class CreditReportActivity extends BaseActivity implements View.OnClickListener {
+    private CreditReportActivity mContext;//本类
+    @ViewInject(R.id.back)
+    private LinearLayout mBack;//返回上一层
+    @ViewInject(R.id.title)
+    private TextView mTitle;//标题
+    @ViewInject(R.id.credit_submit)
+    private TextView mSubmit;//提交按钮
+    @ViewInject(R.id.more_content)
+    private TextView mSubmitText;//提交的文本内容
+    @ViewInject(R.id.credit_report_name)
+    private EditText mCreditName;//姓名
+    @ViewInject(R.id.credit_report_code)
+    private EditText mCreditCode;//身份证
+    @ViewInject(R.id.credit_report_tel)
+    private EditText mCreditTel;//电话号码
+    @ViewInject(R.id.credit_report_email)
+    private EditText mCreditEmail;//电子邮件
+    @ViewInject(R.id.credit_report_project)
+    private EditText mCreditProject;//举报项目名称
+    @ViewInject(R.id.credit_report_result)
+    private EditText mCreditResult;//举报原因
+    @ViewInject(R.id.credit_affix_gridView)
+    private GridView mGvImg;//上传附件
+    @ViewInject(R.id.credit_name)
+    private TextView mName;//姓名
+    @ViewInject(R.id.credit_code)
+    private TextView mCode;//号码
+    @ViewInject(R.id.credit_tel)
+    private TextView mTel;//电话
+    @ViewInject(R.id.credit_email)
+    private TextView mEmail;//邮件
+    @ViewInject(R.id.credit_project)
+    private TextView mProject;//项目
+    @ViewInject(R.id.credit_result)
+    private TextView mResult;//原因
+    private int jumpType = -1;//跳转的页面辨识
+    private List<String> mList;//图片集合
+    private static final int IMG_RESULT_CODE = 0x001;//标识符
+    private SystemFunUtil imgUtil;// 拍照
+    private CreditGridViewAdapter adapter;
+    private File imgFile = null;//保存图片的文件
+    private MyProgressDialog progressDialog;//进度条
+    private HttpUtil http;//网络请求
+    private PopupWindow popDialog;//dialog
+    private static final String[] values = {"相机","相册"};
+    private static final int IMG_RESULT_PHONE_CODE = 0x002;//相册
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (MyApplication.loginType==1){//个人登录
+            MyApplication.setLanguage(this, Locale.SIMPLIFIED_CHINESE);
+        }else{
+            MyApplication.setLanguage(this, Locale.TRADITIONAL_CHINESE);
+        }
+        mContext = this;
+        initData();
+        initGridViewData();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mBack.setFocusable(true);
+    }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case HttpUtil.SUCCESS:
+                    if (msg.arg1 == RequestCode.CREDITSERVICE){
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();// 关闭进度条
+                        }
+                        ResultModel model = JSONObject.parseObject(msg.obj.toString(), ResultModel.class);
+                        if (model.getResult().equals("1")){
+                            ToastUtil.showBottomShort(mContext,"提交成功");
+                            finish();
+                        }else{
+                            ToastUtil.showBottomShort(mContext,model.getErrorMsg());
+                        }
+                    }
+                    break;
+                case HttpUtil.EMPTY:
+                    if (msg.arg1 == RequestCode.CREDITSERVICE){
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();// 关闭进度条
+                        }
+                        ToastUtil.showBottomShort(mContext,"提交异常");
+                    }
+                    break;
+                case HttpUtil.FAILURE:
+                    ToastUtil.showBottomShort(mContext, RequestCode.ERRORINFO);
+                    break;
+                case HttpUtil.LOADING:
+                    if (msg.arg1 == RequestCode.CREDITSERVICE) {
+                        progressDialog.setMessage(msg.arg2 + "%");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 信用服务
+     */
+    private void getCreditData(String userID,String xm,String sfzhm,
+                    String phone,String email,String mc,String type,String content){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+//                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            String url = WebUrlConfig.getCreditService();
+            RequestParams params = http.getParams(url);
+            params.addBodyParameter("userID",userID);
+            params.addBodyParameter("xm",xm);
+            params.addBodyParameter("sfzhm",sfzhm);
+            params.addBodyParameter("phone",phone);
+            params.addBodyParameter("email",email);
+            params.addBodyParameter("mc",mc);
+            params.addBodyParameter("type",type);
+            params.addBodyParameter("content",content);
+            Log.e("jack","imageSize:"+mList.size());
+            for (String str:mList){
+                if (!TextUtils.isEmpty(str)){
+                    params.addBodyParameter("img", new File(str));
+                }
+            }
+//            http.sendPost(RequestCode.CREDITSERVICE,params);
+            Log.e("jack","params:"+params.getUri());
+            http.uploadFile(RequestCode.CREDITSERVICE,params);
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void initData() {
+//        mSubmitText.setVisibility(View.VISIBLE);
+//        mSubmitText.setText("提交");
+        jumpType = getIntent().getIntExtra("jumpType", 0);
+        if (jumpType == 0) {
+            mTitle.setText("信用监督");
+            mName.setText(R.string.credit_supervise_name);
+            mCode.setText(R.string.credit_supervise_code);
+            mTel.setText(R.string.credit_supervise_tel);
+            mEmail.setText(R.string.credit_supervise_email);
+            mProject.setText(R.string.credit_supervise_project);
+            mResult.setText(R.string.credit_supervise_result);
+        } else if (jumpType == 1) {
+            mTitle.setText("信用咨询");
+            mName.setText(R.string.credit_inquiry_name);
+            mCode.setText(R.string.credit_inquiry_code);
+            mTel.setText(R.string.credit_supervise_tel);
+            mEmail.setText(R.string.credit_inquiry_email);
+            mProject.setText(R.string.credit_inquiry_project);
+            mResult.setText(R.string.credit_inquiry_result);
+        } else if (jumpType == 2) {
+            mTitle.setText("信用异议");
+            mName.setText(R.string.credit_dissent_name);
+            mCode.setText(R.string.credit_dissent_code);
+            mTel.setText(R.string.credit_dissent_tel);
+            mEmail.setText(R.string.credit_dissent_email);
+            mProject.setText(R.string.credit_dissent_project);
+            mResult.setText(R.string.credit_dissent_result);
+        } else if (jumpType == 3) {
+            mTitle.setText("信用申报");
+            mName.setText(R.string.credit_declare_name);
+            mCode.setText(R.string.credit_declare_code);
+            mTel.setText(R.string.credit_declare_tel);
+            mEmail.setText(R.string.credit_declare_email);
+            mProject.setText(R.string.credit_declare_project);
+            mResult.setText(R.string.credit_declare_result);
+        }
+        mSubmit.setOnClickListener(this);
+        mBack.setOnClickListener(this);
+        if (http == null){
+            http = new HttpUtil(handler);
+        }
+        mCreditName.setText(MyApplication.loginModel.getXm());
+        mCreditCode.setText(MyApplication.loginModel.getCode());
+        mCreditName.setFocusable(false);
+        mCreditName.setEnabled(false);
+        mCreditName.setClickable(false);
+        mCreditCode.setFocusable(false);
+        mCreditCode.setEnabled(false);
+        mCreditCode.setClickable(false);
+    }
+
+    /**
+     * 初始化图片
+     */
+    private void initGridViewData() {
+        imgUtil = new SystemFunUtil(mContext);
+        mList = new ArrayList<>();
+        initImg();
+        adapter = new CreditGridViewAdapter(mContext, mList);
+        mGvImg.setAdapter(adapter);
+        mGvImg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {//添加图片
+                    if (mList.size() == 4) {
+                        ToastUtil.showBottomShort(mContext, "最多上传三张图片");
+                        return;
+                    }
+                    popDialog = DialogUtil.customPopShowWayDialog(mContext, DialogUtil.DialogShowWay.FROM_DOWN_TO_UP, values,
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    TextView tv = (TextView) v;
+                                    String name = tv.getText().toString().trim();
+                                    if (name.equals(values[0])){//拍照
+                                        imgUtil.openCamera(SystemFunUtil.SYSTEM_IMAGE, IMG_RESULT_CODE);
+                                    }
+                                    if (name.equals(values[1])){
+                                        imgUtil.openCamera(SystemFunUtil.SYSTEM_IMAGE_PHONE, IMG_RESULT_PHONE_CODE);
+                                    }
+                                    popDialog.dismiss();
+                                }
+                            });
+
+                }else{
+                    mList.remove(position);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+    }
+
+    /**
+     * 获取图片文件夹下的所有图片
+     */
+    private void initImg() {
+        // 加入一个空对象
+        mList.add("");
+        if (imgFile == null) {
+            return;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == mBack) {//返回
+            mContext.finish();
+        }
+        if (v == mSubmit) {//提交
+            if (TextUtils.isEmpty(mCreditName.getText().toString())) {
+                ToastUtil.showBottomShort(mContext, mName.getText().toString()+"不能为空");
+                return;
+            }
+            if (TextUtils.isEmpty(mCreditCode.getText().toString())) {
+                ToastUtil.showBottomShort(mContext, mCode.getText().toString()+"不能为空");
+                return;
+            }
+            if (MyApplication.loginType==1) {//个人登录
+                if (!RegularUtil.isIdCard(mCreditCode.getText().toString())) {
+                    ToastUtil.showBottomShort(mContext, mCode.getText().toString()+"不规范");
+                    return;
+                }
+            }
+            if (TextUtils.isEmpty(mCreditTel.getText().toString())) {
+                ToastUtil.showBottomShort(mContext, mTel.getText().toString()+"不能为空");
+                return;
+            }
+            if (TextUtils.isEmpty(mCreditEmail.getText().toString())) {
+                ToastUtil.showBottomShort(mContext, mEmail.getText().toString()+"不能为空");
+                return;
+            }
+            if (!RegularUtil.isEmail(mCreditEmail.getText().toString())) {
+                ToastUtil.showBottomShort(mContext, mEmail.getText().toString()+"不规范");
+                return;
+            }
+            if (TextUtils.isEmpty(mCreditProject.getText().toString())) {
+                ToastUtil.showBottomShort(mContext, mProject.getText().toString()+"不能为空");
+                return;
+            }
+
+            getCreditData(MyApplication.loginModel.getUserID(),mCreditName.getText().toString().trim(),
+                    mCreditCode.getText().toString().trim(),mCreditTel.getText().toString().trim(),
+                    mCreditEmail.getText().toString().trim(),mCreditProject.getText().toString().trim(),
+                    String.valueOf(jumpType+1),mCreditResult.getText().toString().trim());
+
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == IMG_RESULT_CODE){
+                try{
+                    imgFile = imgUtil.getImgFile();
+                    Log.e("result","path:"+imgFile.getPath());
+                    mList.add(imgFile.getPath());
+                    adapter.notifyDataSetChanged();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            if(requestCode == IMG_RESULT_PHONE_CODE){
+                try {
+                    Uri uri = data.getData();
+                    String imageAbsolutePath = imgUtil.getImageAbsolutePath(uri);
+                    Log.e("result", imageAbsolutePath);
+                    mList.add(imageAbsolutePath);
+                    adapter.notifyDataSetChanged();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
+}

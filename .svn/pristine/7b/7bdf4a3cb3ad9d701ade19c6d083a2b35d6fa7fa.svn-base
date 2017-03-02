@@ -1,0 +1,42 @@
+package com.sitemap.weifang.model;
+
+/**
+ * @desc 信用名片 实体类
+ * Created by chenmeng on 2016/12/22.
+ */
+public class CreditCardModel {
+
+    /**
+     * result : 1
+     * xm : 蒋丽
+     * code : 370721197005163649
+     */
+
+    private String result;
+    private String xm;
+    private String code;
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getXm() {
+        return xm;
+    }
+
+    public void setXm(String xm) {
+        this.xm = xm;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+}

@@ -1,0 +1,36 @@
+package com.sitemap.weifang.config;
+
+/**
+ * com.sitemap.wisdomjingjiang.config.RequestCode
+ *
+ *
+ * @author chenmeng
+ *         接口请求需要用的辨识常量
+ *         create at 2016年4月26日 上午9:30:35
+ */
+public class RequestCode {
+
+    //	string类型常量
+    public static final String ERRORINFO = "服务器无法连接，请稍后再试！";//网络连接错误信息
+    public static final String NONETWORK = "网络无法连接！";//网络无法连接
+
+    /**注册规则*/
+    public static final String REGISTERTOOT = "密码长度应在6-16位，必须是字母跟数字组合";
+
+    //	int类型常量
+    public static final int REGISTERONE = 0x001;//注册常量1
+    public static final int REGISTERTWO = 0x002;//注册2
+    public static final int LOGIN = 0x003;//登录常量
+    public static final int GETMYMSG = 0x004;//获得我的消息
+    public static final int GETCARDCASE = 0x005;//获取我的名片夹
+    public static final int GETRECORDS = 0x006;//获取我的信用记录
+    public static final int GETNEWS = 0x007;//获取新闻
+    public static final int QUERYDATA = 0x008;//查询
+    public static final int CREDITSERVICE = 0x009;//信用服务
+    public static final int GETMYSERVICE = 0x010;//获取我的信用服务
+    public static final int CREDITCARD = 0x011;//信用名片
+    public static final int ADDCARD = 0x012;//信用名片添加
+    public static final int MYNEWSCARD = 0x013;//获取我的名片被添加申请
+    public static final int DEALADDCARD = 0x014;//处理“申请添加信用名片”请求
+    public static final int DELETECARD = 0x015;//删除好友
+}

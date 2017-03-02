@@ -1,0 +1,126 @@
+package com.sitemap.weifang.activity;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.adapter.CreditServiceListAdapter;
+import com.sitemap.weifang.application.MyApplication;
+import com.sitemap.weifang.config.RequestCode;
+import com.sitemap.weifang.config.WebUrlConfig;
+import com.sitemap.weifang.http.HttpUtil;
+import com.sitemap.weifang.util.ToastUtil;
+import com.sitemap.weifang.view.MyProgressDialog;
+
+import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.ViewInject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @desc 信用服务
+ * @author chenmeng created by 2016/12/14
+ */
+@ContentView(R.layout.activity_credit_service)
+public class CreditServiceActivity extends BaseActivity implements View.OnClickListener{
+    private CreditServiceActivity mContext;//本类
+    @ViewInject(R.id.back)
+    private LinearLayout mBack;//返回上一层
+    @ViewInject(R.id.title)
+    private TextView mTitle;//标题
+    @ViewInject(R.id.credit_service_listView)
+    private ListView mLv;//listview
+    private List<String> mList;// 数据
+    private CreditServiceListAdapter adapter;//适配器
+    private MyProgressDialog progressDialog;//进度条
+    private HttpUtil http;//网络请求
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = this;
+        initData();
+        initListViewData();
+    }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();// 关闭进度条
+            }
+            switch (msg.what){
+                case HttpUtil.SUCCESS:
+                    if (msg.arg1 == RequestCode.GETMYSERVICE){
+
+                    }
+                    break;
+                case HttpUtil.EMPTY:
+                    if (msg.arg1 == RequestCode.GETMYSERVICE){
+
+                    }
+                    break;
+                case HttpUtil.FAILURE:
+                    ToastUtil.showBottomShort(mContext, RequestCode.ERRORINFO);
+                    break;
+                case HttpUtil.LOADING:
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 信用服务
+     */
+    private void getCreditService(String userID){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            http.sendGet(RequestCode.GETMYSERVICE, WebUrlConfig.getMyService(userID));
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 初始化view
+     */
+    private void initData() {
+        mBack.setOnClickListener(this);
+        mTitle.setText("信用服务");
+        if (http == null){
+            http = new HttpUtil(handler);
+        }
+    }
+
+    /**
+     * 初始化listview
+     */
+    private void initListViewData(){
+        mList = new ArrayList<>();
+        for (int i=0;i<5;i++){
+            mList.add("");
+        }
+        adapter = new CreditServiceListAdapter(this,mList);
+        mLv.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == mBack){
+            mContext.finish();
+        }
+    }
+}

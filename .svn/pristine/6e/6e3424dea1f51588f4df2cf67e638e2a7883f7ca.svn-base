@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".activity.MainActivity">
+
+    <!--标题-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_80px_in720p"
+        android:background="@color/red_title">
+
+        <LinearLayout
+            android:id="@+id/main_menu"
+            android:layout_width="@dimen/_100px_in720p"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_38px_in720p"
+                android:layout_height="@dimen/_40px_in720p"
+                android:background="@drawable/my_self" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/main_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:singleLine="true"
+            android:text="@string/mian_title"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_35px_in720p" />
+
+        <LinearLayout
+            android:id="@+id/main_msg"
+            android:layout_width="@dimen/_100px_in720p"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_38px_in720p"
+                android:layout_height="@dimen/_40px_in720p"
+                android:background="@drawable/message" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/main_scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--轮播视图-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_350px_in720p">
+
+                <com.sitemap.weifang.view.PageFlipper
+                    android:id="@+id/pagerflipper"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <LinearLayout
+                    android:id="@+id/main_indictor"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50px_in720p"
+                    android:layout_alignBottom="@+id/pagerflipper"
+                    android:gravity="center"
+                    android:orientation="horizontal" />
+
+            </RelativeLayout>
+
+            <!--查询 扫一扫等视图-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/_20px_in720p">
+
+                <com.sitemap.weifang.view.MyGridView
+                    android:id="@+id/main_gridview_check"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:numColumns="3">
+
+                </com.sitemap.weifang.view.MyGridView>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_2px_in720p"
+                android:background="@color/pop_txt_bg" />
+
+            <!--新闻栏-->
+            <LinearLayout
+                android:layout_marginTop="@dimen/_20px_in720p"
+                android:padding="@dimen/_20px_in720p"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textColor="@color/black_dan"
+                    android:textSize="@dimen/_32px_in720p"
+                    android:text="@string/main_news_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.sitemap.weifang.view.MyGridView
+                    android:layout_marginTop="@dimen/_20px_in720p"
+                    android:numColumns="4"
+                    android:id="@+id/main_news_gridview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </com.sitemap.weifang.view.MyGridView>
+
+            </LinearLayout>
+
+            <!--信用栏-->
+            <LinearLayout
+                android:padding="@dimen/_20px_in720p"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textColor="@color/black_dan"
+                    android:textSize="@dimen/_32px_in720p"
+                    android:text="@string/main_credit_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.sitemap.weifang.view.MyGridView
+                    android:layout_marginTop="@dimen/_20px_in720p"
+                    android:numColumns="4"
+                    android:id="@+id/main_credit_gridview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </com.sitemap.weifang.view.MyGridView>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40px_in720p"/>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

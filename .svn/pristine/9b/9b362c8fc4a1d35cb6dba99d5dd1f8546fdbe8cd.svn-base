@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200px_in720p"
+        android:padding="@dimen/_20px_in720p">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="@dimen/_160px_in720p"
+            android:layout_height="@dimen/_160px_in720p" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/image"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:layout_toRightOf="@+id/image"
+            android:maxLines="2"
+            android:textColor="@color/black_dan"
+            android:ellipsize="end"
+            android:textSize="@dimen/_30px_in720p" />
+
+        <TextView
+            android:textColor="@color/black_dan"
+            android:id="@+id/from"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/image"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:layout_toLeftOf="@+id/date"
+            android:layout_toRightOf="@+id/image"
+            android:singleLine="true"
+             />
+
+        <TextView
+            android:textColor="@color/grey"
+            android:singleLine="true"
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/image"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/_20px_in720p"
+             />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

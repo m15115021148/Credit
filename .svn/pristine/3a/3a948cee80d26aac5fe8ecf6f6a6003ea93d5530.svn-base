@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200px_in720p"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/check_img"
+            android:layout_width="@dimen/_120px_in720p"
+            android:layout_height="@dimen/_120px_in720p"
+            />
+
+        <TextView
+            android:id="@+id/check_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10px_in720p"
+            android:singleLine="true"
+            android:text="查询"
+            android:textColor="@color/black_dan"
+            android:textSize="@dimen/_30px_in720p" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

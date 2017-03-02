@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context="com.sitemap.weifang.activity.RegisterActivity">
+
+    <include
+        android:id="@+id/register_title"
+        layout="@layout/include_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/_40px_in720p"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:id="@+id/person"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:background="@drawable/gr_qy_bg"
+            android:layout_width="@dimen/_320px_in720p"
+            android:layout_height="@dimen/_88px_in720p">
+
+            <ImageView
+                android:background="@drawable/register_person_bg"
+                android:layout_width="@dimen/_40px_in720p"
+                android:layout_height="@dimen/_40px_in720p" />
+
+            <TextView
+                android:layout_marginLeft="@dimen/_20px_in720p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="个人"
+                android:textColor="@drawable/register_text_color"
+                android:textSize="@dimen/_35px_in720p" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:id="@+id/company"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:background="@drawable/gr_qy_bg"
+            android:layout_width="@dimen/_320px_in720p"
+            android:layout_height="@dimen/_88px_in720p">
+
+            <ImageView
+                android:background="@drawable/register_company_bg"
+                android:layout_width="@dimen/_40px_in720p"
+                android:layout_height="@dimen/_40px_in720p" />
+
+            <TextView
+                android:layout_marginLeft="@dimen/_20px_in720p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="企业"
+                android:textColor="@drawable/register_text_color"
+                android:textSize="@dimen/_35px_in720p" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_88px_in720p"
+        android:layout_marginLeft="@dimen/_20px_in720p"
+        android:layout_marginRight="@dimen/_20px_in720p"
+        android:layout_marginTop="@dimen/_80px_in720p"
+        android:background="@drawable/zcbg"
+        android:gravity="center">
+
+        <EditText
+            android:singleLine="true"
+            android:id="@+id/register_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:background="#ffffffff"
+            android:hint="请输入身份证号码"
+            android:paddingLeft="@dimen/_50px_in720p"
+            android:paddingRight="@dimen/_1px_in720p"
+            android:textSize="@dimen/_25px_in720p" />
+
+        <TextView
+            android:layout_width="@dimen/_26px_in720p"
+            android:layout_height="@dimen/_30px_in720p"
+            android:layout_alignLeft="@+id/register_code"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:background="@drawable/zh"
+            android:textSize="@dimen/_25px_in720p" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/isShow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_88px_in720p"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:layout_marginTop="@dimen/_80px_in720p"
+            android:background="@drawable/zcbg"
+            android:gravity="center">
+
+            <EditText
+                android:singleLine="true"
+                android:id="@+id/register_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="@dimen/_20px_in720p"
+                android:layout_marginRight="@dimen/_20px_in720p"
+                android:background="#ffffffff"
+                android:hint="请输入登录名(数字或字母组成)"
+                android:paddingLeft="@dimen/_50px_in720p"
+                android:paddingRight="@dimen/_1px_in720p"
+                android:textSize="@dimen/_25px_in720p" />
+
+            <TextView
+                android:layout_width="@dimen/_26px_in720p"
+                android:layout_height="@dimen/_30px_in720p"
+                android:layout_alignLeft="@+id/register_name"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="@dimen/_20px_in720p"
+                android:background="@drawable/zh"
+                android:textSize="@dimen/_25px_in720p" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_88px_in720p"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:layout_marginTop="@dimen/_60px_in720p"
+            android:background="@drawable/zcbg"
+            android:gravity="center">
+
+            <EditText
+                android:singleLine="true"
+                android:id="@+id/register_psw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="@dimen/_20px_in720p"
+                android:layout_marginRight="@dimen/_20px_in720p"
+                android:background="#ffffffff"
+                android:hint="请输入密码"
+                android:inputType="textPassword"
+                android:paddingLeft="@dimen/_50px_in720p"
+                android:paddingRight="@dimen/_1px_in720p"
+                android:textSize="@dimen/_25px_in720p" />
+
+            <TextView
+                android:layout_width="@dimen/_26px_in720p"
+                android:layout_height="@dimen/_30px_in720p"
+                android:layout_alignLeft="@+id/register_psw"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="@dimen/_15px_in720p"
+                android:background="@drawable/mima"
+                android:textSize="@dimen/_25px_in720p" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_88px_in720p"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:layout_marginTop="@dimen/_60px_in720p"
+            android:background="@drawable/zcbg"
+            android:gravity="center">
+
+            <EditText
+                android:singleLine="true"
+                android:id="@+id/register_psw_sure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="@dimen/_20px_in720p"
+                android:layout_marginRight="@dimen/_20px_in720p"
+                android:background="#ffffffff"
+                android:hint="请再次输入密码"
+                android:inputType="textPassword"
+                android:paddingLeft="@dimen/_50px_in720p"
+                android:paddingRight="@dimen/_1px_in720p"
+                android:textSize="@dimen/_25px_in720p" />
+
+            <TextView
+                android:layout_width="@dimen/_26px_in720p"
+                android:layout_height="@dimen/_30px_in720p"
+                android:layout_alignLeft="@+id/register_psw_sure"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="@dimen/_15px_in720p"
+                android:background="@drawable/mima"
+                android:textSize="@dimen/_25px_in720p" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/register_submit"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_88px_in720p"
+        android:layout_marginLeft="@dimen/_20px_in720p"
+        android:layout_marginRight="@dimen/_20px_in720p"
+        android:layout_marginTop="@dimen/_60px_in720p"
+        android:background="@drawable/zcsub"
+        android:gravity="center"
+        android:text="下一步"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_31px_in720p" />
+
+    <LinearLayout
+        android:id="@+id/tishi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_20px_in720p"
+        android:layout_marginLeft="@dimen/_20px_in720p"
+        android:layout_marginTop="@dimen/_40px_in720p"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="注册即视为同意"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/_24px_in720p" />
+
+        <TextView
+            android:id="@+id/use_treaty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="《信用潍坊APP用户规定及相关协议》"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_24px_in720p" />
+    </LinearLayout>
+</LinearLayout>

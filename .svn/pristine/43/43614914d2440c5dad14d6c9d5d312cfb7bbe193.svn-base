@@ -1,0 +1,220 @@
+package com.sitemap.weifang.activity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.view.menu.MenuView;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSONObject;
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.application.MyApplication;
+import com.sitemap.weifang.config.RequestCode;
+import com.sitemap.weifang.config.WebUrlConfig;
+import com.sitemap.weifang.http.HttpUtil;
+import com.sitemap.weifang.model.LoginModel;
+import com.sitemap.weifang.util.PreferencesUtil;
+import com.sitemap.weifang.util.RegularUtil;
+import com.sitemap.weifang.util.ToastUtil;
+import com.sitemap.weifang.view.MyProgressDialog;
+
+import org.json.JSONArray;
+import org.xutils.http.RequestParams;
+import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.ViewInject;
+
+import java.util.Set;
+
+import cn.jpush.android.api.JPushInterface;
+import cn.jpush.android.api.TagAliasCallback;
+
+/**
+ * 登录页面
+ */
+@ContentView(R.layout.activity_login)
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
+    private LoginActivity mContext;//本类
+    @ViewInject(R.id.back)
+    private LinearLayout back;//返回上一层
+    @ViewInject(R.id.login_code)
+    private EditText mCode;//帐号
+    @ViewInject(R.id.login_psw)
+    private EditText mPsw;//密码
+    @ViewInject(R.id.person)
+    private TextView mPerson;//个人
+    @ViewInject(R.id.company)
+    private TextView mCompany;//企业
+    @ViewInject(R.id.login_submit)
+    private TextView mSubmit;//登录
+    @ViewInject(R.id.register)
+    private TextView mRegister;//注册
+    private int type = 1;//是个人注册 还是企业注册 1 为个人  2为企业
+    private MyProgressDialog progressDialog;//进度条
+    private HttpUtil http;//网络请求
+    private static final int MSG_SET_ALIAS = 5001;//极光设置 别名
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = this;
+        init();
+    }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();// 关闭进度条
+            }
+            switch (msg.what){
+                case HttpUtil.SUCCESS:
+                    if (msg.arg1 == RequestCode.LOGIN){
+                        MyApplication.loginModel = JSONObject.parseObject(msg.obj.toString(),LoginModel.class);
+                        if (TextUtils.isEmpty(MyApplication.loginModel.getErrorMsg())){//登录成功
+                            MyApplication.isLogin = true;
+                            MyApplication.loginType = type;
+                            //自动登录 保存用户信息
+                            PreferencesUtil.setDataModel(mContext,"userModel",MyApplication.loginModel);
+                            PreferencesUtil.isFirstLogin(mContext,"first",true);
+                            PreferencesUtil.setStringTxt(mContext,"loginType",String.valueOf(MyApplication.loginType));
+                            ToastUtil.showBottomShort(mContext,"登录成功");
+                            JPushInterface.setAlias(getApplicationContext(), MyApplication.loginModel.getUserID(), mAliasCallback);
+                            mContext.finish();
+                        }else{
+                            ToastUtil.showBottomShort(mContext,MyApplication.loginModel.getErrorMsg());
+                        }
+                    }
+                    break;
+                case HttpUtil.EMPTY:
+                    if (msg.arg1 == RequestCode.LOGIN){
+                    }
+                    break;
+                case HttpUtil.FAILURE:
+                    ToastUtil.showBottomShort(mContext,RequestCode.ERRORINFO);
+                    break;
+                case HttpUtil.LOADING:
+                    break;
+                case MSG_SET_ALIAS://推送
+                    JPushInterface.setAlias(getApplicationContext(), MyApplication.loginModel.getUserID(), mAliasCallback);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 登录
+     */
+    private void getLogin(String username,String psw,String type){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            String password = MyApplication.md5(psw);
+            String url = WebUrlConfig.getLogin();
+            RequestParams params = http.getParams(url);
+            params.addBodyParameter("username",username);
+            params.addBodyParameter("password",password);
+            params.addBodyParameter("type",type);
+            Log.e("result",params.toString());
+            http.sendPost(RequestCode.LOGIN,params);
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void init() {
+        back.setOnClickListener(this);
+        mPerson.setOnClickListener(this);
+        mPerson.setSelected(true);
+        mCompany.setOnClickListener(this);
+        mRegister.setOnClickListener(this);
+        mSubmit.setOnClickListener(this);
+        if (http == null){
+            http = new HttpUtil(handler);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == back) {
+            finish();
+        }
+        if (v == mPerson) {
+            type=1;
+            mPerson.setSelected(true);
+            mCompany.setSelected(false);
+            mCode.setHint("请输入登录名(数字或字母组成)");
+        }
+        if (v == mCompany) {
+            type=2;
+            mPerson.setSelected(false);
+            mCompany.setSelected(true);
+            mCode.setHint("请输入登录名(数字或字母组成)");
+        }
+        if (v == mRegister) {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        }
+        if (v == mSubmit) {
+            if (TextUtils.isEmpty(mCode.getText().toString().trim())){
+                ToastUtil.showBottomShort(mContext,"登录名不能为空");
+                return;
+            }
+            if (!RegularUtil.isInputCharOrNum(mCode.getText().toString())){
+                ToastUtil.showBottomShort(mContext,"登录名必须为数字或字母");
+                return;
+            }
+            if (TextUtils.isEmpty(mPsw.getText().toString())){
+                ToastUtil.showBottomShort(mContext,"密码不能为空");
+                return;
+            }
+            getLogin(mCode.getText().toString(),mPsw.getText().toString(),String.valueOf(type));
+        }
+    }
+
+    /**
+     * 设置极光别名回调
+     */
+    private final TagAliasCallback mAliasCallback = new TagAliasCallback() {
+
+        @Override
+        public void gotResult(int code, String alias, Set<String> tags) {
+            String logs ;
+            switch (code) {
+                case 0:
+                    logs = "Set tag and alias success";
+                    Log.i("TAG", logs);
+                    Log.i("TAG", alias);
+                    break;
+                case 6002:
+                    logs = "Failed to set alias and tags due to timeout. Try again after 60s.";
+                    Log.i("TAG", logs);
+                    if (MyApplication.getNetObject().isNetConnected()) {
+                        handler.sendMessageDelayed(handler.obtainMessage(MSG_SET_ALIAS, alias), 1000 * 60);
+                    } else {
+                        ToastUtil.showBottomShort(mContext,"网络无法连接！");
+                    }
+                    break;
+                default:
+                    logs = "Failed with errorCode = " + code;
+                    Log.e("TAG", logs);
+            }
+        }
+
+    };
+}

@@ -1,0 +1,177 @@
+package com.sitemap.weifang.application;
+
+import android.app.Application;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.model.LoginModel;
+import com.sitemap.weifang.util.NetworkUtil;
+
+import org.xutils.BuildConfig;
+import org.xutils.x;
+
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Locale;
+
+import cn.jpush.android.api.JPushInterface;
+
+/**
+ * Created by chenmeng on 2016/11/16.
+ */
+public class MyApplication extends Application {
+    private static MyApplication instance;//application对象
+    public static NetworkUtil netState;//网络状态
+    public static int loginType = 1;//登录类型 1 为个人登录 2 为组织登录
+    public static boolean isLogin = false;//是否登录 默认false没有登录
+    public static LoginModel loginModel;//登录成功实体类
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        initXutils();
+        netState = new NetworkUtil(getApplicationContext());
+        JPushInterface.setDebugMode(true);// 设置开启日志,发布时请关闭日志
+        JPushInterface.init(this);
+    }
+
+    /**
+     * 初始化xutils框架
+     */
+    private void initXutils() {
+        x.Ext.init(this);
+        x.Ext.setDebug(BuildConfig.DEBUG); // 是否输出debug日志, 开启debug会影响性能.
+    }
+
+    public static MyApplication instance() {
+        if (instance != null) {
+            return instance;
+        } else {
+            return new MyApplication();
+        }
+    }
+
+    /**
+     * 获取手机网络状态对象
+     *
+     * @return
+     */
+    public static NetworkUtil getNetObject() {
+        if (netState != null) {
+            return netState;
+        } else {
+            return new NetworkUtil(instance().getApplicationContext());
+        }
+    }
+
+
+    /**
+     * 画点
+     *
+     * @param mContext 本类
+     * @param layout   圆点的布局
+     * @param list     圆点的集合
+     * @param len      圆点的数量
+     * @param select   圆点选中的图片
+     * @param normal   圆点没有选中的图片
+     */
+    public static void drawPoint(Context mContext,
+                                 LinearLayout layout, List<View> list,
+                                 int len,
+                                 int select, int normal) {
+        list.clear();
+        layout.removeAllViews();
+        int size = mContext.getResources().getDimensionPixelSize(R.dimen._16px_in720p);
+        for (int i = 0; i < len; i++) {
+            ImageView dot = new ImageView(mContext);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    size,size
+//                    LinearLayout.LayoutParams.WRAP_CONTENT,
+//                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(10, 0, 10, 0);
+            if (i == 0) {
+                dot.setBackgroundResource(select);
+            } else {
+                dot.setBackgroundResource(normal);
+            }
+            layout.addView(dot, params);
+            list.add(dot);
+        }
+    }
+
+    /**
+     * listview没有数据显示 的控件
+     *
+     * @param context 本类
+     * @param T       AbsListView
+     * @param txt     内容
+     */
+    public static void setEmptyShowText(Context context, AbsListView T, String txt) {
+        TextView emptyView = new TextView(context);
+        emptyView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        emptyView.setText(txt);
+        emptyView.setTextSize(18);
+        emptyView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+        emptyView.setVisibility(View.GONE);
+        ((ViewGroup) T.getParent()).addView(emptyView);
+        T.setEmptyView(emptyView);
+    }
+
+    /**
+     * 设置是个人登录 还是组织登录
+     *
+     * @param context 本类
+     * @param local   Locale.TRADITIONAL_CHINESE 组织登录
+     *                Locale.SIMPLIFIED_CHINESE 个人登录
+     */
+    public static void setLanguage(Context context, Locale local) {
+        //获得资源对象
+        Resources resources = context.getResources();
+        //获得设置对象
+        Configuration configuration = resources.getConfiguration();
+        //获得屏幕参数：主要是分辨率，像素等。
+        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        //设置语言
+        configuration.locale = local;
+        //更新设置
+        resources.updateConfiguration(configuration, displayMetrics);
+    }
+
+    /**
+     * 描述：MD5加密.
+     *(全大写字母)32
+     * @param string
+     *            要加密的字符串
+     * @return String 加密的字符串
+     */
+    public static String md5(String string) {
+        byte[] hash;
+        try {
+            hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Huh, MD5 should be supported?", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Huh, UTF-8 should be supported?", e);
+        }
+        StringBuilder hex = new StringBuilder(hash.length * 2);
+        for (byte b : hash) {
+            if ((b & 0xFF) < 0x10) hex.append("0");
+            hex.append(Integer.toHexString(b & 0xFF));
+        }
+        return hex.toString().toUpperCase();
+    }
+
+}

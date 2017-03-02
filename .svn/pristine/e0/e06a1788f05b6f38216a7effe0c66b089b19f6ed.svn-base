@@ -1,0 +1,153 @@
+package com.sitemap.weifang.activity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSONObject;
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.adapter.MessageListAdapter;
+import com.sitemap.weifang.application.MyApplication;
+import com.sitemap.weifang.config.RequestCode;
+import com.sitemap.weifang.config.WebUrlConfig;
+import com.sitemap.weifang.http.HttpUtil;
+import com.sitemap.weifang.model.MyMsgModel;
+import com.sitemap.weifang.util.ToastUtil;
+import com.sitemap.weifang.view.MyProgressDialog;
+
+import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.ViewInject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 消息页面
+ * @author chenmeng created by 2016/11/16
+ */
+@ContentView(R.layout.activity_message)
+public class MessageActivity extends BaseActivity implements View.OnClickListener{
+    private MessageActivity mContext;//本类
+    @ViewInject(R.id.back)
+    private LinearLayout mBack;//返回上一层
+    @ViewInject(R.id.title)
+    private TextView mTitle;//标题
+    @ViewInject(R.id.msg_listView)
+    private ListView mLv;//listview
+    private MyProgressDialog progressDialog;//进度条
+    private HttpUtil http;//网络请求
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = this;
+        initData();
+    }
+
+    /**
+     * 初始化view
+     */
+    private void initData() {
+        mBack.setOnClickListener(this);
+        mTitle.setText("消息");
+        if (http == null){
+            http = new HttpUtil(handler);
+        }
+        getMyMsg(MyApplication.loginModel.getUserID());
+    }
+
+    /**
+     * 获得我的消息
+     */
+    private void getMyMsg(String userID){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            http.sendGet(RequestCode.GETMYMSG, WebUrlConfig.getMyMsg(userID));
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();// 关闭进度条
+            }
+            switch (msg.what){
+                case HttpUtil.SUCCESS:
+                    //我的消息
+                    if (msg.arg1 == RequestCode.GETMYMSG){
+                        MyMsgModel msgModel = JSONObject.parseObject(msg.obj.toString(), MyMsgModel.class);
+                        initListView(msgModel);
+                    }
+                    break;
+                case HttpUtil.EMPTY:
+                    //我的消息
+                    if (msg.arg1 == RequestCode.GETMYMSG){
+                    }
+                    break;
+                case HttpUtil.FAILURE:
+                    ToastUtil.showBottomShort(mContext,RequestCode.ERRORINFO);
+                    break;
+                case HttpUtil.LOADING:
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 初始化listview
+     */
+    private void initListView(MyMsgModel msgModel){
+        final String[] str = {"新闻推送","信用服务","新名片"};
+        MessageListAdapter adapter = new MessageListAdapter(this,Arrays.asList(str),msgModel);
+        mLv.setAdapter(adapter);
+        mLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent();
+                switch (position){
+                    case 0://新闻
+                        intent.setClass(mContext,NewsListActivity.class);
+                        intent.putExtra("jumpType",4);//推送的新闻消息
+                        startActivity(intent);
+                        break;
+                    case 1://信用
+                        intent.setClass(mContext,CreditServiceActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 2://名片
+                        intent.setClass(mContext,NewCardActivity.class);
+                        startActivity(intent);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == mBack){
+            mContext.finish();
+        }
+    }
+}

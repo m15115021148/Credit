@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context="com.sitemap.weifang.activity.UserActivity">
+
+    <include
+        android:id="@+id/user_title"
+        layout="@layout/include_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_400px_in720p"
+        android:background="@color/red_title"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_200px_in720p"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/user_head"
+                android:layout_width="@dimen/_140px_in720p"
+                android:layout_height="@dimen/_140px_in720p"
+                android:src="@drawable/user_img" />
+        </LinearLayout>
+
+        <TextView
+            android:singleLine="true"
+            android:gravity="center"
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_70px_in720p"
+            android:textColor="@color/white" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_70px_in720p"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/_14px_in720p"
+                android:layout_height="@dimen/_22px_in720p"
+                android:background="@drawable/user_phone"
+                />
+
+            <TextView
+                android:id="@+id/phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_15px_in720p"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_20px_in720p"
+        android:background="@color/pop_txt_bg" />
+
+    <RelativeLayout
+        android:id="@+id/to_erweima"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100px_in720p">
+
+        <TextView
+            android:id="@+id/user_qr_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:text="我的二维码" />
+
+        <TextView
+            android:layout_width="@dimen/_34px_in720p"
+            android:layout_height="@dimen/_34px_in720p"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_60px_in720p"
+            android:background="@drawable/erweima" />
+
+        <TextView
+            android:layout_width="@dimen/_18px_in720p"
+            android:layout_height="@dimen/_32px_in720p"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:background="@drawable/ru" />
+    </RelativeLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_2px_in720p"
+        android:background="@color/pop_txt_bg" />
+
+    <RelativeLayout
+        android:id="@+id/to_card"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100px_in720p">
+
+        <TextView
+            android:id="@+id/user_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:text="我的证件" />
+
+        <TextView
+            android:id="@+id/code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:text="身份证" />
+
+        <TextView
+            android:visibility="gone"
+            android:layout_width="@dimen/_18px_in720p"
+            android:layout_height="@dimen/_32px_in720p"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:background="@drawable/ru" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_2px_in720p"
+        android:background="@color/pop_txt_bg" />
+
+    <RelativeLayout
+        android:id="@+id/to_jilu"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100px_in720p">
+
+        <TextView
+            android:id="@+id/user_credit_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:text="我的信用记录" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_40px_in720p"
+            android:text="" />
+
+        <TextView
+            android:layout_width="@dimen/_18px_in720p"
+            android:layout_height="@dimen/_32px_in720p"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:background="@drawable/ru" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_20px_in720p"
+        android:background="@color/pop_txt_bg" />
+
+    <RelativeLayout
+        android:id="@+id/to_set"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100px_in720p">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:text="设置" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_40px_in720p"
+            android:text="" />
+
+        <TextView
+            android:layout_width="@dimen/_18px_in720p"
+            android:layout_height="@dimen/_32px_in720p"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_20px_in720p"
+            android:background="@drawable/ru" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/pop_txt_bg"></LinearLayout>
+</LinearLayout>

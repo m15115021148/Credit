@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_150px_in720p"
+        android:padding="@dimen/_20px_in720p">
+
+        <ImageView
+            android:id="@+id/msg_img"
+            android:layout_width="@dimen/_90px_in720p"
+            android:layout_height="@dimen/_90px_in720p"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+             />
+
+        <TextView
+            android:id="@+id/msg_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/msg_img"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:layout_toRightOf="@+id/msg_img"
+            android:singleLine="true"
+            android:text="消息"
+            android:textColor="@color/black_dan"
+            android:textSize="@dimen/_35px_in720p" />
+
+        <TextView
+            android:id="@+id/msg_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/msg_img"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:layout_toRightOf="@+id/msg_img"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="哈哈哈哈哈哈哈纪委纠风哈哈哈哈哈哈哈哈哈哈"
+            android:textColor="@color/darkgrey"
+            android:textSize="@dimen/_30px_in720p" />
+
+        <TextView
+            android:gravity="right"
+            android:id="@+id/msg_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/msg_title"
+            android:layout_marginLeft="@dimen/_20px_in720p"
+            android:layout_alignParentRight="true"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="刚刚"
+            android:textColor="@color/darkgrey"
+            android:textSize="@dimen/_25px_in720p" />
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,71 @@
+package com.sitemap.weifang.adapter;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.http.HttpImageUtil;
+import com.sitemap.weifang.model.SearchCompanyModel;
+
+import java.util.List;
+
+/**
+ * @desc 查询结果适配器
+ * Created by chenmeng on 2017/1/19.
+ */
+public class SearchResultAdapter extends BaseAdapter{
+    private Context mContext;
+    private List<SearchCompanyModel> mList;
+    private Holder holder;
+
+    public SearchResultAdapter(Context context,List<SearchCompanyModel> list){
+        this.mContext = context;
+        this.mList = list;
+    }
+
+    @Override
+    public int getCount() {
+        return mList.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return mList.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null){
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.search_result_list_view_item,null);
+            holder = new Holder();
+            holder.img = (ImageView) convertView.findViewById(R.id.image);
+            holder.name = (TextView) convertView.findViewById(R.id.name);
+            holder.code = (TextView) convertView.findViewById(R.id.code);
+            convertView.setTag(holder);
+        }else{
+            holder = (Holder) convertView.getTag();
+        }
+        SearchCompanyModel model = mList.get(position);
+        HttpImageUtil.loadImage(holder.img,"");
+        holder.code.setText(model.getCode());
+        holder.name.setText(model.getXm());
+
+        return convertView;
+    }
+
+
+    private class Holder{
+        ImageView img;
+        TextView name,code;
+    }
+}

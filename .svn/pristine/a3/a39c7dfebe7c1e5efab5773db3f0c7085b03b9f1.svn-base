@@ -1,0 +1,191 @@
+package com.sitemap.weifang.activity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSONObject;
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.adapter.NewCardListAdapter;
+import com.sitemap.weifang.application.MyApplication;
+import com.sitemap.weifang.config.RequestCode;
+import com.sitemap.weifang.config.WebUrlConfig;
+import com.sitemap.weifang.http.HttpUtil;
+import com.sitemap.weifang.model.NewCardModel;
+import com.sitemap.weifang.model.ResultModel;
+import com.sitemap.weifang.util.ToastUtil;
+import com.sitemap.weifang.view.MyProgressDialog;
+
+import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.ViewInject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @desc 新名片
+ * @author chenmeng created by 2016/12/14
+ */
+@ContentView(R.layout.activity_new_card)
+public class NewCardActivity extends BaseActivity implements View.OnClickListener,NewCardListAdapter.OnNewCardAddCallBack{
+    private NewCardActivity mContext;//本类
+    @ViewInject(R.id.back)
+    private LinearLayout mBack;//返回上一层
+    @ViewInject(R.id.title)
+    private TextView mTitle;//标题
+    @ViewInject(R.id.new_card_listView)
+    private ListView mLv;//listview
+    private List<NewCardModel> mList;// 数据
+    private NewCardListAdapter adapter;// 适配器
+    private MyProgressDialog progressDialog;//进度条
+    private HttpUtil http;//网络请求
+    private int type = 0;//类别
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = this;
+        initData();
+    }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();// 关闭进度条
+            }
+            switch (msg.what){
+                case HttpUtil.SUCCESS:
+                    //获取我的名片被添加申请
+                    if (msg.arg1 == RequestCode.MYNEWSCARD){
+                        mList = new ArrayList<>();
+                        mList.clear();
+                        mList = JSONObject.parseArray(msg.obj.toString(), NewCardModel.class);
+                        initListViewData(mList);
+                    }
+                    //处理“申请添加信用名片”请求
+                    if (msg.arg1 == RequestCode.DEALADDCARD){
+                        ResultModel model = JSONObject.parseObject(msg.obj.toString(), ResultModel.class);
+                        if (model.getResult().equals("1")){
+                            ToastUtil.showBottomShort(mContext,"请求成功");
+                        }else{
+                            ToastUtil.showBottomShort(mContext,model.getErrorMsg());
+                        }
+                    }
+                    break;
+                case HttpUtil.EMPTY:
+                    //获取我的名片被添加申请
+                    if (msg.arg1 == RequestCode.MYNEWSCARD){
+                        MyApplication.setEmptyShowText(mContext,mLv,"暂无最新好友请求");
+                    }
+                    //处理“申请添加信用名片”请求
+                    if (msg.arg1 == RequestCode.DEALADDCARD){
+                        ToastUtil.showBottomShort(mContext,"请求异常");
+                    }
+                    break;
+                case HttpUtil.FAILURE:
+                    ToastUtil.showBottomShort(mContext, RequestCode.ERRORINFO);
+                    break;
+                case HttpUtil.LOADING:
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 获取我的名片被添加申请
+     */
+    private void getNesCard(String userID){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            http.sendGet(RequestCode.MYNEWSCARD, WebUrlConfig.getMyNewCard(userID));
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 处理“申请添加信用名片”请求
+     */
+    private void dealAddCard(String addCardID,String opinion){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            http.sendGet(RequestCode.DEALADDCARD, WebUrlConfig.getDealAddCard(addCardID, opinion));
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 初始化view
+     */
+    private void initData() {
+        mBack.setOnClickListener(this);
+        mTitle.setText("新名片");
+        if (http == null){
+            http = new HttpUtil(handler);
+        }
+        type = getIntent().getIntExtra("type",0);
+        if (type==2){
+            mList = new ArrayList<>();
+            mList.clear();
+            mList = JSONObject.parseArray(getIntent().getStringExtra("NewCardModel"),NewCardModel.class);
+            initListViewData(mList);
+        }else{
+            getNesCard(MyApplication.loginModel.getUserID());
+        }
+    }
+
+    /**
+     * 初始化listview
+     */
+    private void initListViewData(List<NewCardModel> list){
+        adapter = new NewCardListAdapter(this,list,this);
+        mLv.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == mBack){
+            mContext.finish();
+        }
+    }
+
+    @Override
+    public void onIgnore(int pos) {
+        dealAddCard(mList.get(pos).getCardID(),String.valueOf(2));
+    }
+
+    @Override
+    public void onAdd(int pos) {
+        dealAddCard(mList.get(pos).getCardID(),String.valueOf(1));
+    }
+
+    @Override
+    public void onEntry(int pos) {
+        Intent intent = new Intent(mContext,CreditCardActivity.class);
+        intent.putExtra("isShow",2);
+        if (MyApplication.loginType==1){
+            intent.putExtra("personID",mList.get(pos).getUserID());
+        }else{
+            intent.putExtra("companyID",mList.get(pos).getUserID());
+        }
+        startActivity(intent);
+    }
+}

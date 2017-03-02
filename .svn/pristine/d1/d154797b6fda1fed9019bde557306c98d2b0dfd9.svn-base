@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!--查询-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60px_in720p"
+        android:background="@color/pop_txt_bg">
+
+        <LinearLayout
+            android:visibility="visible"
+            android:id="@+id/card_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/_25px_in720p"
+                android:layout_height="@dimen/_25px_in720p"
+                android:background="@drawable/search" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10px_in720p"
+                android:text="搜索"
+                android:textSize="@dimen/_20px_in720p" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_layout"
+            android:visibility="gone"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_marginLeft="@dimen/_20px_in720p"
+                android:layout_width="@dimen/_25px_in720p"
+                android:layout_height="@dimen/_25px_in720p"
+                android:background="@drawable/search" />
+
+            <EditText
+                android:hint="搜索"
+                android:id="@+id/card_search_txt"
+                android:background="@null"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:singleLine="true"
+                android:paddingLeft="@dimen/_20px_in720p"
+                android:textColor="@color/black_dan"
+                android:textSize="@dimen/_25px_in720p"
+                />
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

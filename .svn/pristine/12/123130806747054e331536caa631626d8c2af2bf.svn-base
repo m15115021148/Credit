@@ -1,0 +1,59 @@
+package com.sitemap.weifang.model;
+
+/**
+ * @desc 信用记录
+ * Created by chenmeng on 2016/12/22.
+ */
+public class CreditRecordModel {
+
+    /**
+     * result : 2
+     * errorMsg : 自然人记录暂未开通..
+     */
+
+    private String result;
+    private String errorMsg;
+    private String title;
+    private String msg;
+    private String time;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+}

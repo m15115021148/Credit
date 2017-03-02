@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_about"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="com.sitemap.weifang.activity.AboutActivity">
+
+    <include
+        android:id="@+id/about_tilte"
+        layout="@layout/include_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/about_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/about_tilte"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/_250px_in720p"
+        android:text="@string/app_name"
+        android:textColor="@color/black_dan"
+        android:textSize="@dimen/_40px_in720p" />
+
+    <ImageView
+        android:id="@+id/about_img"
+        android:layout_width="@dimen/_160px_in720p"
+        android:layout_height="@dimen/_160px_in720p"
+        android:layout_below="@+id/about_name"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/_10px_in720p"
+        android:src="@color/red_title" />
+
+    <TextView
+        android:id="@+id/about_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/about_img"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/_10px_in720p"
+        android:text="V1.1.1"
+        android:textColor="@color/black_dan"
+        android:textSize="@dimen/_32px_in720p" />
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="@dimen/_130px_in720p"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10px_in720p"
+            android:text="XXXXXXXXXXXXXXXXXXXXXXX"
+            android:textColor="@color/black_dan"
+            android:textSize="@dimen/_36px_in720p" />
+
+        <TextView
+            android:id="@+id/about_call_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10px_in720p"
+            android:text="客服电话：111-11111-3456"
+            android:textColor="@color/lan"
+            android:textSize="@dimen/_36px_in720p" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10px_in720p"
+            android:text="客服QQ：11111133456"
+            android:textColor="@color/black_dan"
+            android:textSize="@dimen/_36px_in720p" />
+
+    </LinearLayout>
+
+</RelativeLayout>

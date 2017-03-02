@@ -1,0 +1,170 @@
+package com.sitemap.weifang.activity;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSONObject;
+import com.sitemap.weifang.R;
+import com.sitemap.weifang.adapter.CreditRecordAdapter;
+import com.sitemap.weifang.application.MyApplication;
+import com.sitemap.weifang.config.RequestCode;
+import com.sitemap.weifang.config.WebUrlConfig;
+import com.sitemap.weifang.http.HttpUtil;
+import com.sitemap.weifang.model.CreditRecordModel;
+import com.sitemap.weifang.util.ToastUtil;
+import com.sitemap.weifang.view.MyProgressDialog;
+
+import org.xutils.view.annotation.ContentView;
+import org.xutils.view.annotation.ViewInject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 获取我的信用记录
+ */
+@ContentView(R.layout.activity_credit_record)
+public class CreditRecordActivity extends BaseActivity implements View.OnClickListener{
+    private CreditRecordActivity mContext;//本类
+    @ViewInject(R.id.back)
+    private LinearLayout mBack;//返回上一层
+    @ViewInject(R.id.title)
+    private TextView mTitle;//标题
+    @ViewInject(R.id.news_list)
+    private ListView news_list;//信用承诺列表
+    private CreditRecordAdapter adapter;//适配器
+    private MyProgressDialog progressDialog;//进度条
+    private HttpUtil http;//网络请求
+    private List<CreditRecordModel> mList;//数据
+    @ViewInject(R.id.credit_record_txt)
+    private TextView mTxt;//内容
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        init();
+    }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();// 关闭进度条
+            }
+            switch (msg.what){
+                case HttpUtil.SUCCESS:
+                    //获取我的信用记录
+                    if (msg.arg1 == RequestCode.GETRECORDS){
+                        mList = new ArrayList<>();
+                        mList = JSONObject.parseArray(msg.obj.toString(), CreditRecordModel.class);
+//                        initListViewData(mList);
+                        initData(mList);
+                    }
+                    break;
+                case HttpUtil.EMPTY:
+                    if (msg.arg1 == RequestCode.GETRECORDS){
+                        MyApplication.setEmptyShowText(mContext,news_list,"暂无记录");
+                    }
+                    break;
+                case HttpUtil.FAILURE:
+                    ToastUtil.showBottomShort(mContext, RequestCode.ERRORINFO);
+                    break;
+                case HttpUtil.LOADING:
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 获取我的信用记录
+     */
+    private void getRecord(String userID){
+        if (MyApplication.getNetObject().isNetConnected()){
+            progressDialog = MyProgressDialog.createDialog(mContext);
+            if (progressDialog!=null&&!progressDialog.isShowing()){
+                progressDialog.setMessage("加载中...");
+                progressDialog.show();
+            }
+            http.sendGet(RequestCode.GETRECORDS, WebUrlConfig.getRecords(userID));
+        }else{
+            ToastUtil.showBottomShort(mContext, RequestCode.NONETWORK);
+        }
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void init(){
+        mContext = this;
+        mBack.setOnClickListener(this);
+        mTitle.setText("我的信用记录");
+        if (http == null){
+            http = new HttpUtil(handler);
+        }
+        getRecord(MyApplication.loginModel.getUserID());
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void initData(List<CreditRecordModel> list){
+        CreditRecordModel model = list.get(0);
+        String str = "无";
+        mTxt.setText(
+                "企业名称："+((model.getV_QY_INDEX_2447().equals(""))?str:model.getV_QY_INDEX_2447())+"\n\n"+
+                "经营范围："+((model.getV_QY_INDEX_2560().equals(""))?str:model.getV_QY_INDEX_2560())+"\n\n"+
+                "企业状态："+((model.getV_QY_INDEX_2564().equals(""))?str:model.getV_QY_INDEX_2564())+"\n\n"+
+                "所属部门："+((model.getV_QY_INDEX_2565().equals(""))?str:model.getV_QY_INDEX_2565())+"\n\n"+
+                "企业性质："+((model.getV_QY_INDEX_2458().equals(""))?str:model.getV_QY_INDEX_2458())+"\n\n"+
+                "工商注册号："+((model.getV_QY_INDEX_2448().equals(""))?str:model.getV_QY_INDEX_2448())+"\n\n"+
+                "注册资金（万元）："+((model.getV_QY_INDEX_2449().equals(""))?str:model.getV_QY_INDEX_2449())+"\n\n"+
+                "统一社会信用代码："+((model.getV_QY_INDEX_2450().equals(""))?str:model.getV_QY_INDEX_2450())+"\n\n"+
+                "法定代表人："+((model.getV_QY_INDEX_2451().equals(""))?str:model.getV_QY_INDEX_2451())+"\n\n"+
+                "其他信息："+((model.getV_QY_INDEX_2452().equals(""))?str:model.getV_QY_INDEX_2452())+"\n\n"+
+                "成立日期："+((model.getV_QY_INDEX_2453().equals(""))?str:model.getV_QY_INDEX_2453())+"\n\n"+
+                "核准日期："+((model.getV_QY_INDEX_2454().equals(""))?str:model.getV_QY_INDEX_2454())+"\n\n"+
+                "营业期限自："+((model.getV_QY_INDEX_2455().equals(""))?str:model.getV_QY_INDEX_2455())+"\n\n"+
+                "营业期限："+((model.getV_QY_INDEX_2456().equals(""))?str:model.getV_QY_INDEX_2456())+"\n\n"+
+                "地址："+((model.getV_QY_INDEX_2457().equals(""))?str:model.getV_QY_INDEX_2457())+"\n\n"+
+                "企业荣誉："+((model.getV_QY_INDEX_2362().equals(""))?str:model.getV_QY_INDEX_2362())+"\n\n"+
+                "地税非正常纳税企业："+((model.getV_QY_INDEX_2340().equals(""))?str:model.getV_QY_INDEX_2340())+"\n\n"+
+                "企业行政许可信息："+((model.getV_QY_INDEX_2720().equals(""))?str:model.getV_QY_INDEX_2720())+"\n\n"+
+                "企业经营异常信息："+((model.getV_QY_INDEX_2566().equals(""))?str:model.getV_QY_INDEX_2566())+"\n\n"+
+                "守信用重合同："+((model.getV_QY_INDEX_2386().equals(""))?str:model.getV_QY_INDEX_2386())+"\n\n"+
+                "国税重大违法信息："+((model.getV_QY_INDEX_2349().equals(""))?str:model.getV_QY_INDEX_2349())+"\n\n"+
+                "地税A级纳税企业："+((model.getV_QY_INDEX_2342().equals(""))?str:model.getV_QY_INDEX_2342())+"\n\n"+
+                "国税A级纳税企业："+((model.getV_QY_INDEX_2343().equals(""))?str:model.getV_QY_INDEX_2343())+"\n\n"+
+                "地税欠税信息："+((model.getV_QY_INDEX_2341().equals(""))?str:model.getV_QY_INDEX_2341())+"\n\n"+
+                "国税欠税信息："+((model.getV_QY_INDEX_2344().equals(""))?str:model.getV_QY_INDEX_2344())+"\n\n"+
+                "行政处罚信息："+((model.getV_QY_INDEX_2623().equals(""))?str:model.getV_QY_INDEX_2623())+"\n\n"+
+                "环境违法行为："+((model.getV_QY_INDEX_2384().equals(""))?str:model.getV_QY_INDEX_2384())+"\n\n"+
+                "法院失信被执行信息："+((model.getV_QY_INDEX_2800().equals(""))?str:model.getV_QY_INDEX_2800())+"\n\n"+
+                "旅游局处罚企业信息："+((model.getV_QY_INDEX_2466().equals(""))?str:model.getV_QY_INDEX_2466())+"\n\n"+
+                "食药局处罚信息："+((model.getV_QY_INDEX_2387().equals(""))?str:model.getV_QY_INDEX_2387())+"\n\n"
+        );
+    }
+
+    /**
+     * 初始化listview数据
+     */
+    private void initListViewData(List<CreditRecordModel> list) {
+        adapter=new CreditRecordAdapter(mContext,list);
+        news_list.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == mBack){
+            mContext.finish();
+        }
+    }
+}
